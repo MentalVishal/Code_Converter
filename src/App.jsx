@@ -6,24 +6,19 @@ import { Hourglass } from "react-loader-spinner";
 
 function App() {
   const [language, setLanguage] = useState("");
+  const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState("");
-  const backend = "https://backend-code-converter-m8mv.onrender.com";
-
-  const editorRef = useRef(null);
-
-  function handleEditorDidMount(editor, monaco) {
-    editorRef.current = editor;
-  }
+  const backend = "https://text-generator-b3kp.onrender.com";
 
   const handelConvert = async () => {
     setLoading(true);
     const data = {
-      code: editorRef.current.getValue(),
-      language: language,
+      text: text,
+      convert: language,
     };
     await axios
-      .post(`${backend}/convert`, data)
+      .post(`${backend}/converter`, data)
       .then((response) => {
         setResult(response.data);
         console.log(response.data);
@@ -34,13 +29,13 @@ function App() {
       });
   };
 
-  const handelDebug = async () => {
+  const handelGenerate = async () => {
     setLoading(true);
     const data = {
-      code: editorRef.current.getValue(),
+      text: text,
     };
     await axios
-      .post(`${backend}/debug`, data)
+      .post(`${backend}/text`, data)
       .then((response) => {
         setResult(response.data);
         console.log(response.data);
@@ -51,13 +46,13 @@ function App() {
       });
   };
 
-  const handelChecker = async () => {
+  const handelSummarize = async () => {
     setLoading(true);
     const data = {
-      code: editorRef.current.getValue(),
+      text: text,
     };
     await axios
-      .post(`${backend}/checker`, data)
+      .post(`${backend}/summarize`, data)
       .then((response) => {
         setResult(response.data);
         console.log(response.data);
@@ -77,31 +72,32 @@ function App() {
           }}
         >
           <option value="">Select Language</option>
-          <option value="Python">Python</option>
-          <option value="Javascript">Javascript</option>
-          <option value="Java">Java</option>
-          <option value="Typescript">Typescript</option>
+          <option value="Hindi">Hindi</option>
+          <option value="Sanskrit">Sanskrit</option>
+          <option value="Telgu">Telgu</option>
+          <option value="Tamil">Tamil</option>
+          <option value="Malyalam">Malyalam</option>
+          <option value="Bhojpuri">Bhojpuri</option>
         </select>
 
         <button className="button-29" onClick={handelConvert}>
-          Convert
+          Translate
         </button>
-        <button className="button-29" onClick={handelDebug}>
-          Debug
+        <button className="button-29" onClick={handelGenerate}>
+          Generate
         </button>
-        <button className="button-29" onClick={handelChecker}>
-          Quality Check
+        <button className="button-29" onClick={handelSummarize}>
+          Summarise
         </button>
       </div>
       <div id="body">
         <div id="editor">
-          <Editor
-            height="90vh"
-            width="100%"
-            theme="vs-dark"
-            onMount={handleEditorDidMount}
-            defaultLanguage="javascript"
-            defaultValue="Write your code here..."
+          <textarea
+            placeholder="Write Your Text Here..."
+            value={text}
+            onChange={(e) => {
+              setText(e.target.value);
+            }}
           />
         </div>
         <div id="output">
@@ -143,6 +139,12 @@ const Div = styled.div`
     justify-content: space-around;
     display: flex;
     flex-direction: row;
+  }
+  #editor textarea {
+    width: 95%;
+    height: 85vh;
+    padding: 1.2rem 1rem 1rem 1.2rem;
+    font-size: 1.2rem;
   }
 
   #nav select {
